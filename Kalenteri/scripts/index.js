@@ -1,6 +1,5 @@
 import { initCalendar } from "./calendar.js";
-
-import { initViewSelect } from "./view-select.js";
+import { initViewSelect } from "./viewselect.js";
 
 
 initCalendar();

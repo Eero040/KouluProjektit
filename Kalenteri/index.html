@@ -22,7 +22,7 @@
         </svg>
         <span class="sidebar_title">Kalenteri</span>
       </div>
-      <button class="button button--primary button--lg">Luo tapahtuma</button>
+      <button class="button button--primary button--lg" data-event-create-button>Luo tapahtuma</button>
     </div>
     <main class="main">
       <div class="nav">
@@ -94,7 +94,7 @@
             <li class="month-calendar_day-of-week">La</li>
             <li class="month-calendar_day-of-week">Su</li>
           </ul>
-
+          <!-- lista piiloon tästä muista tarkistaa day list kohilta jos muuttuu paljon-->
           <div class="month-calendar_day-list-wrapper">
             <ul class="month-calendar_day-list">
               <li class="month-calendar_day">
@@ -317,9 +317,9 @@
             </ul>
           </div>
         </div>
-
-        <div class="week-calendar" data-week-calendar style="display: none;">
-          <ul class="week-calendar_day-of-week">
+        <!--ja tästä-->
+        <div class="week-calendar week-calendar-day" data-week-calendar style="display: none;">
+          <ul class="week-calendar_day-of-week-list">
             <li class="week-calendar_day-of-week">
               <button class="week-calendar_day-of-week-button">
                 <span class="week-calendar_day-of-week-day">ma</span>
@@ -526,6 +526,15 @@
                   <div class="week-calendar_cell"></div>
 
                   <div class="week-calendar_cell"></div>
+
+                  <button class="event event-filled event-dynamic">
+                    <span class="event_color"></span>
+                    <span class="event_title">toka event</span>
+                    <span class="event_time">
+                      <Time>2:15</Time>
+                      <Time>4:15</Time>
+                    </span>
+                  </button>
 
                 </div>
                 <div class="week-calendar_column">

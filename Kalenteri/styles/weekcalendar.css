@@ -1,0 +1,115 @@
+.week-calendar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.week-calendar_day-of-week-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding: 0.5rem 0.5rem 0 4.5rem;
+}
+
+.week-calendar-day .week-calendar-day-of-week-list {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.week-calendar_day-of-week {
+  display: flex;
+  justify-content: center;
+}
+
+.week-calendar_day-of-week-button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color var(--duration-sm) ease-out;
+}
+
+.week-calendar_day-of-week-day {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-gray);
+}
+
+.week-calendar_day-of-week-number {
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-md);
+  color: var(--color-text-dark);
+}
+
+.week-calendar_all-day-list {
+  position: relative;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding: 0.5rem;
+  padding-left: 4.5rem;
+}
+
+.week-calendar-day .week-calendar_all-day-list {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.week-calendar_all-day-list-item {
+  padding: 0 0.125rem;
+}
+
+.week-calendar_content {
+  position: relative;
+  flex: 1;
+}
+
+.week-calendar_content-inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  overflow-y: auto;
+}
+
+.week-calendar_time-list {
+  height: 4.5rem;
+  text-align: center;
+}
+
+.week-calendar_time-item {
+  height: 4.5rem;
+}
+
+.week-calendar_time {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+  color: var(--color-gray);
+}
+
+.week-calendar_columns {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding-top: 0.75rem;
+}
+
+.week-calendar-day .week-calendar_columns {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.week-calendar_column {
+  position: relative;
+}
+
+.week-calendar_cell {
+  height: 4rem;
+  border-top: 1px solid var(--color-gray);
+  border-left: 1px solid var(--color-gray);
+}

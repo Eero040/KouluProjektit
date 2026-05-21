@@ -1,13 +1,15 @@
+/* muista ./ merkki alkuun*/
 @import "./nav.css";
-@import "./event-list.css";
+@import "./eventlist.css";
 @import "./event.css";
 @import "./sidebar.css";
 @import "./button.css";
 @import "./responsive.css";
 @import "./select.css";
-@import "./month-calendar.css";
-@import "./event-list.css";
+@import "./monthcalendar.css";
+@import "./eventlist.css";
 @import "./event.css";
+@import "./weekcalendar.css";
 
 * {
   font-family: ui-sans-serif, system-ui, sans-serif;
