@@ -11,6 +11,8 @@
 @import "./event.css";
 @import "./weekcalendar.css";
 @import "./dialog.css";
+@import "./form.css";
+@import "./input.css";
 
 * {
   font-family: ui-sans-serif, system-ui, sans-serif;
