@@ -1,0 +1,40 @@
+import { waitUntilAnimationsFinish } from "./animation.js";
+export function initDialog(name) {
+  const dialogElement = document.querySelector(`[data-dialog=${name}]`);
+  const closeButtonElements = document.querySelectorAll("[data-dialog-close-button]");
+
+  function close() {
+    dialogElement.classList.add("dialog-closing");
+
+    waitUntilAnimationsFinish(dialogElement)
+      .then(() => {
+        dialogElement.classList.remove("dialog-closing");
+        dialogElement.close();
+      })
+      .catch((error) => {
+        console.error("ei toimi", error);
+      })
+
+  }
+
+  for (const closeButtonElement of closeButtonElements) {
+    closeButtonElement.addEventListener("click", () => {
+      close();
+    });
+  }
+
+
+  dialogElement.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    close();
+  });
+
+  return {
+    open() {
+      dialogElement.showModal();
+    },
+    close() {
+      close();
+    }
+  };
+}

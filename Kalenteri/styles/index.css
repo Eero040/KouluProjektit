@@ -10,6 +10,7 @@
 @import "./eventlist.css";
 @import "./event.css";
 @import "./weekcalendar.css";
+@import "./dialog.css";
 
 * {
   font-family: ui-sans-serif, system-ui, sans-serif;
@@ -31,15 +32,18 @@ body {
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
+  --font-size-2xl: 1.5rem;
 
   --line-height-xs: 1rem;
   --line-height-sm: 1.25rem;
   --line-height-md: 1.5rem;
   --line-height-lg: 1.75rem;
+  --line-height-2xl: 2rem;
 
   --border-radius-md: 0.25rem;
 
   --duration-sm: 100ms;
+  --duration-md: 300ms;
 
   --color-blue: #1d95bd;
   --color-lightblue: #84c0d4;
@@ -47,7 +51,6 @@ body {
   --color-gray-white: #d3d3d3;
   --color-gray: #808080;
 
-  --color-white: #ffffff;
 
   --color-text-light: #ffffff;
   --color-text-dark: #000000;
