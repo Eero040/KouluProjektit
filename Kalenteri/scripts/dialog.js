@@ -30,6 +30,7 @@ export function initDialog(name) {
   });
 
   return {
+    dialogElement,
     open() {
       dialogElement.showModal();
     },
