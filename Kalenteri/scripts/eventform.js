@@ -1,9 +1,22 @@
-export function initEventForm() {
+import { validateEvent } from "./event.js";
+export function initEventForm(toaster) {
   const formElement = document.querySelector("[data-event-form]");
 
   formElement.addEventListener("submit", (event) => {
     event.preventDefault();
-    console.log("toimii");
+    const formEvent = formIntoEvent(formElement);
+    const validationError = validateEvent(formEvent);
+    if (validationError != null) {
+      toaster.error(validationError);
+      return;
+    }
+
+    formElement.dispatchEvent(new CustomEvent("event-create", {
+      detail: {
+        event: formEvent
+      },
+      bubbles: true
+    }));
   });
 
   return {
@@ -16,4 +29,17 @@ export function initEventForm() {
 
 function formIntoEvent(formElement) {
   const formData = new FormData(formElement);
+  const title = formData.get("title");
+  const date = formData.get("date");
+  const startTime = formData.get("start_time");
+  const endTime = formData.get("end_time");
+
+  const event = {
+    title,
+    date: new Date(date),
+    startTime: Number.parseInt(startTime, 10),
+    endTime: Number.parseInt(endTime, 10)
+  };
+
+  return event;
 }
