@@ -12,6 +12,10 @@
   padding: 0.75rem 0;
 }
 
+.month-calendar_day-highlight {
+  background-color: var(--color-pastel);
+}
+
 .month-calendar_day-of-week-list {
   font-size: var(--font-size-md);
   line-height: var(--line-height-md);

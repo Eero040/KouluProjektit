@@ -1,29 +1,30 @@
+import { today } from "./date.js";
+import { initMonthCalendar } from "./monthcalendar.js";
 export function initCalendar() {
-  const monthCalendarElement = document.querySelector("[data-month-calendar]");
-  const weekCalendarElement = document.querySelector("[data-week-calendar]");
-  const dayCalendarElement = document.querySelector("[data-day-calendar]");
+  const CalendarElement = document.querySelector("[data-calendar]");
 
+  let selectedView = "month";
+  let selectedDate = today();
+
+  function refreshCalendar() {
+    CalendarElement.replaceChildren();
+    if (selectedView == "month") {
+      initMonthCalendar(CalendarElement, selectedDate);
+    } else if (selectedView == "week") {
+    } else {
+    }
+  }
 
   document.addEventListener("view-change",
     (event) => {
-      const selectedView = event.detail.view;
-
-      if (selectedView == "month") {
-        monthCalendarElement.style.display = "flex";
-        weekCalendarElement.style.display = "none";
-        dayCalendarElement.style.display = "none";
-
-      } else if (selectedView == "week") {
-        monthCalendarElement.style.display = "none";
-        weekCalendarElement.style.display = "flex";
-        dayCalendarElement.style.display = "none";
-
-      } else {
-        monthCalendarElement.style.display = "none";
-        monthCalendarElement.style.display = "none";
-        dayCalendarElement.style.display = "flex";
-
-      }
+      selectedView = event.detail.view;
+      refreshCalendar();
     }
   );
+
+  document.addEventListener("date-change", (event) => {
+    selectedDate = event.detail.date;
+    refreshCalendar();
+  });
+  refreshCalendar();
 }
