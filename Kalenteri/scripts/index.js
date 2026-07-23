@@ -6,8 +6,8 @@ import { initNotifications } from "./notifications.js";
 import { initViewSelect } from "./viewselect.js";
 import { initNav } from "./nav.js";
 
-
-initCalendar();
+const eventStore = initEventStore();
+initCalendar(eventStore);
 initEventCreateButton();
 initEventStore();
 initNotifications();

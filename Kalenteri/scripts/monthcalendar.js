@@ -1,4 +1,5 @@
 import { generateMonthCalendarDays, today, isTheSameDay } from "./date.js";
+import { initEventList } from "./eventlist.js";
 
 const calendarTemplateElement = document.querySelector("[data-template='month-calendar']");
 const calendarDayTemplateElement = document.querySelector("[data-template='month-calendar_day']");
@@ -8,7 +9,7 @@ const calendarWeekClasses = {
   6: "six-week"
 };
 
-export function initMonthCalendar(parent, selectedDate) {
+export function initMonthCalendar(parent, selectedDate, eventStore) {
   const calendarContent = calendarTemplateElement.content.cloneNode(true);
   const calendarElement = calendarContent.querySelector("[data-month-calendar]");
   const calendarDayListElement = calendarElement.querySelector("[data-month-calendar-day-list]");
@@ -21,13 +22,14 @@ export function initMonthCalendar(parent, selectedDate) {
     calendarElement.classList.add(calendarWeekClass);
   }
   for (const calendarDay of calendarDays) {
-    initCalendarDay(calendarDayListElement, calendarDay);
+    const events = eventStore.getEventsByDate(calendarDay);
+    initCalendarDay(calendarDayListElement, calendarDay, events);
   }
 
   parent.appendChild(calendarElement);
 }
 
-function initCalendarDay(parent, calendarDay) {
+function initCalendarDay(parent, calendarDay, events) {
   const calendarDayContent = calendarDayTemplateElement.content.cloneNode(true);
   const calendarDayElement = calendarDayContent.querySelector("[data-month-calendar-day]");
   const calendarDayLabelElement = calendarDayContent.querySelector("[data-month-calendar-day-label]");
@@ -37,6 +39,8 @@ function initCalendarDay(parent, calendarDay) {
   }
 
   calendarDayLabelElement.textContent = calendarDay.getDate();
+
+  initEventList(calendarDayElement, events);
 
   parent.appendChild(calendarDayElement);
 }
