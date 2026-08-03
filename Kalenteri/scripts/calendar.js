@@ -1,5 +1,7 @@
 import { today } from "./date.js";
 import { initMonthCalendar } from "./monthcalendar.js";
+import { initWeekCalendar } from "./weekcalendar.js";
+
 export function initCalendar(eventStore) {
   const CalendarElement = document.querySelector("[data-calendar]");
 
@@ -11,6 +13,7 @@ export function initCalendar(eventStore) {
     if (selectedView == "month") {
       initMonthCalendar(CalendarElement, selectedDate, eventStore);
     } else if (selectedView == "week") {
+      initWeekCalendar(CalendarElement, selectedDate, eventStore);
     } else {
     }
   }

@@ -23,6 +23,11 @@ function initEvent(event) {
 export function isEventAllDay(event) {
   return event.startTime === 0 && event.endTime === 1440;
 }
+
+export function eventStartBefore(eventA, eventB) {
+  return eventA.startTime < eventB.startTime;
+}
+
 export function validateEvent(event) {
   if (event.startTime >= event.endTime) {
     return "Tapahtuman loppumis-aika pitää olla aloitus-ajan jälkeen.";
