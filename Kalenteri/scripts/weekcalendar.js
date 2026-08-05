@@ -18,12 +18,9 @@ const dateFormatter = new Intl.DateTimeFormat("fi-FI", {
 export function initWeekCalendar(parent, selectedDate, eventStore) {
   const calendarContent = calendarTemplateElement.content.cloneNode(true);
   const calendarElement = calendarContent.querySelector("[data-week-calendar]");
-  const calendarDayOfWeekListElement = calendarElement.querySelector(
-    "[data-week-calendar-day-of-week-list]");
-  const calendarAllDayListElement = calendarElement.querySelector(
-    "[data-week-calendar-all-day-list]");
-  const calendarColumnsElement = calendarElement.querySelector(
-    "[data-week-calendar-columns]");
+  const calendarDayOfWeekListElement = calendarElement.querySelector("[data-week-calendar-day-of-week-list]");
+  const calendarAllDayListElement = calendarElement.querySelector("[data-week-calendar-all-day-list]");
+  const calendarColumnsElement = calendarElement.querySelector("[data-week-calendar-columns]");
 
   const weekDays = generateWeekDays(selectedDate);
   for (const weekDay of weekDays) {
