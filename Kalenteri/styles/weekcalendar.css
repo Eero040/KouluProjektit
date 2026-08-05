@@ -31,6 +31,7 @@
   background-color: transparent;
   cursor: pointer;
   transition: background-color var(--duration-sm) ease-out;
+  flex-direction: column;
 }
 
 .week-calendar_day-of-week-button-highlight {
