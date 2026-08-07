@@ -31,6 +31,13 @@
   align-items: stretch;
 }
 
+.event-dynamic .event_title {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--event-title-max-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .event_color {
   display: inline-block;

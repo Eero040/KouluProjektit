@@ -1,5 +1,5 @@
 import { generateWeekDays, isTheSameDay, today } from "./date.js";
-import { isEventAllDay, eventStartBefore, eventEndsBefore, initDynamicEvent, eventCollidesWith } from "./event.js"
+import { isEventAllDay, eventStartBefore, eventEndsBefore, initDynamicEvent, eventCollidesWith, adjustDynamicEventMaxLines } from "./event.js"
 import { initEventList } from "./eventlist.js"
 
 const calendarTemplateElement = document.querySelector("[data-template='week-calendar']");
@@ -37,6 +37,11 @@ export function initWeekCalendar(parent, selectedDate, eventStore, isSingleDay) 
   }
 
   parent.appendChild(calendarElement);
+
+  const dynamicEventElements = calendarElement.querySelectorAll("[data-event-dynamic]");
+  for (const dynamicEventElement of dynamicEventElements) {
+    adjustDynamicEventMaxLines(dynamicEventElement);
+  }
 }
 
 function initDayOfWeek(parent, selectedDate, weekDay) {
@@ -81,23 +86,38 @@ function initColumn(parent, weekDay, events) {
 }
 
 function calculateEventsDynamicStyles(events) {
-  return events.map((event) => {
-    const topPercentage = 100 * (event.startTime / 1440);
-    const bottomPercentage = 100 - 100 * (event.endTime / 1440);
+  const { eventGroups, totalColumns } = groupEvents(events);
+  const columnWidth = 100 / totalColumns;
+  const initialEventGroupItems = [];
+
+  for (const eventGroup of eventGroups) {
+    for (const eventGroupItem of eventGroup) {
+      if (eventGroupItem.isInitial) {
+        initialEventGroupItems.push(eventGroupItem);
+      }
+    }
+  }
+
+  return initialEventGroupItems.map((eventGroupItem) => {
+    const topPercentage = 100 * (eventGroupItem.event.startTime / 1440);
+    const bottomPercentage = 100 - 100 * (eventGroupItem.event.endTime / 1440);
+    const leftPercentage = columnWidth * eventGroupItem.columnIndex;
+    const rightPercentage = columnWidth * (totalColumns - eventGroupItem.columnIndex - eventGroupItem.columnSpan);
+
 
     return {
-      event,
+      event: eventGroupItem.event,
       styles: {
         top: `${topPercentage}%`,
         bottom: `${bottomPercentage}%`,
-        left: "0%",
-        right: "0%"
+        left: `${leftPercentage}%`,
+        right: `${rightPercentage}%`
       }
     }
   });
 }
 
-function groupEvents() {
+function groupEvents(events) {
   if (events.length === 0) {
     return { eventGroups: [], totalColumns: 0 };
   }
@@ -106,7 +126,8 @@ function groupEvents() {
     {
       event: events[0],
       columnIndex: 0,
-      isInitial: true
+      isInitial: true,
+      eventIndex: 0
     }
   ];
 
@@ -121,7 +142,8 @@ function groupEvents() {
       const newEventGroupItem = {
         event: loopEvent,
         columnIndex: 0,
-        isInitial: true
+        isInitial: true,
+        eventIndex: i
       };
 
       const newEventGroup = [newEventGroupItem];
@@ -133,7 +155,8 @@ function groupEvents() {
       const newEventGroupItem = {
         event: loopEvent,
         columnIndex: lastEventGroup.length,
-        isInitial: true
+        isInitial: true,
+        eventIndex: i
       };
 
       lastEventGroup.push(newEventGroupItem);
@@ -154,19 +177,66 @@ function groupEvents() {
     const newEventGroupItem = {
       event: loopEvent,
       columnIndex: newColumnIndex,
-      isInitial: true
+      isInitial: true,
+      eventIndex: i
     };
 
-    constNewEventGroup = {
+    const newEventGroup = [
       ...lastEventGroupCollidingItems.map((eventGroupItem) => ({
         ...eventGroupItem,
         isInitial: false
       })),
       newEventGroupItem
-    };
+    ];
 
     eventGroups.push(newEventGroup);
   }
+
+  let totalColumns = 0;
+  for (const eventGroup of eventGroups) {
+    for (const eventGroupItem of eventGroup) {
+      totalColumns = Math.max(totalColumns, eventGroupItem.columnIndex + 1);
+    }
+  }
+
+  for (const eventGroup of eventGroups) {
+    eventGroup.sort((columnGroupItemA, columnGroupItemB) => {
+      return columnGroupItemA.columnIndex < columnGroupItemB.columnIndex ? -1 : 1;
+    });
+
+    for (let i = 0; i < eventGroup.length; i += 1) {
+      const loopEventGroupItem = eventGroup[i];
+      if (i === eventGroup.length - 1) {
+        loopEventGroupItem.columnSpan = totalColumns - loopEventGroupItem.columnIndex;
+      } else {
+        const nextLoopEventGroupItem = eventGroup[i + 1];
+        loopEventGroupItem.columnSpan = nextLoopEventGroupItem.
+          columnIndex - loopEventGroupItem.columnIndex;
+      }
+    }
+  }
+
+  for (let i = 0; i < events.length; i += 1) {
+    let lowestColumnSpan = Infinity;
+
+    for (const eventGroup of eventGroups) {
+      for (const eventGroupItem of eventGroup) {
+        if (eventGroupItem.eventIndex === i) {
+          lowestColumnSpan = Math.min(lowestColumnSpan, eventGroupItem.columnSpan);
+        }
+      }
+    }
+
+    for (const eventGroup of eventGroups) {
+      for (const eventGroupItem of eventGroup) {
+        if (eventGroupItem.eventIndex === i) {
+          eventGroupItem.columnSpan = lowestColumnSpan;
+        }
+      }
+    }
+  }
+
+  return { eventGroups, totalColumns };
 }
 
 function sortEventsByTime(events) {

@@ -1,5 +1,10 @@
 const eventTemplateElement = document.querySelector("[data-template='event']");
 
+const dateFormatter = new Intl.DateTimeFormat("fi-FI", {
+  hour: "numeric",
+  minute: "numeric"
+});
+
 export function initStaticEvent(parent, event) {
   const eventElement = initEvent(event);
 
@@ -21,6 +26,8 @@ export function initDynamicEvent(parent, event, dynamicStyles) {
   eventElement.style.right = dynamicStyles.right;
   eventElement.style.bottom = dynamicStyles.bottom;
 
+  eventElement.dataset.eventDynamic = true;
+
   parent.appendChild(eventElement);
 }
 
@@ -31,6 +38,13 @@ function initEvent(event) {
   const eventStartTimeElement = eventElement.querySelector("[data-event-start-time]");
   const eventEndTimeElement = eventElement.querySelector("[data-event-end-time]");
   eventTitleElement.textContent = event.title;
+
+  const startDate = eventTimeToDate(event, event.startTime);
+  const endDate = eventTimeToDate(event, event.endTime);
+
+  eventStartTimeElement.textContent = dateFormatter.format(startDate);
+  eventEndTimeElement.textContent = dateFormatter.format(endDate);
+
   return eventElement;
 }
 
@@ -53,10 +67,28 @@ export function eventCollidesWith(eventA, eventB) {
   return minEndTime > maxStartTime;
 }
 
+export function eventTimeToDate(event, eventTime) {
+  return new Date(
+    event.date.getFullYear(),
+    event.date.getMonth(),
+    event.date.getDate(),
+    0,
+    eventTime
+  );
+}
+
 export function validateEvent(event) {
   if (event.startTime >= event.endTime) {
     return "Tapahtuman loppumis-aika pitää olla aloitus-ajan jälkeen.";
   }
 
   return null;
+}
+
+export function adjustDynamicEventMaxLines(dynamicEventElement) {
+  const availableHeight = dynamicEventElement.offsetHeight;
+  const lineHeight = 16;
+  const padding = 8;
+  const maxTitleLines = Math.floor((availableHeight - lineHeight - padding) / lineHeight);
+  dynamicEventElement.style.setProperty("--event-title-max-line", maxTitleLines);
 }
