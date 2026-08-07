@@ -22,10 +22,6 @@
 
 .event-dynamic {
   position: absolute;
-  top: 12.5%;
-  right: 0;
-  bottom: 75%;
-  left: 0;
   width: unset;
   border: 1px solid white;
   white-space: unset;

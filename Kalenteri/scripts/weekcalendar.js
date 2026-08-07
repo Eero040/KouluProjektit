@@ -1,5 +1,5 @@
 import { generateWeekDays, isTheSameDay, today } from "./date.js";
-import { isEventAllDay } from "./event.js"
+import { isEventAllDay, eventStartBefore, eventEndsBefore, initDynamicEvent, eventCollidesWith } from "./event.js"
 import { initEventList } from "./eventlist.js"
 
 const calendarTemplateElement = document.querySelector("[data-template='week-calendar']");
@@ -23,9 +23,13 @@ export function initWeekCalendar(parent, selectedDate, eventStore, isSingleDay) 
     const events = eventStore.getEventsByDate(weekDay);
     const allDayEvents = events.filter((event) => isEventAllDay
       (event));
+    const nonAllDayEvents = events.filter((event) => !isEventAllDay(event));
+
+    sortEventsByTime(nonAllDayEvents);
+
     initDayOfWeek(calendarDayOfWeekListElement, selectedDate, weekDay);
     initAllDayListItem(calendarAllDayListElement, allDayEvents);
-    initColumn(calendarColumnsElement, weekDay);
+    initColumn(calendarColumnsElement, weekDay, events);
   }
 
   if (isSingleDay) {
@@ -59,10 +63,120 @@ function initAllDayListItem(parent, events) {
   parent.appendChild(calendarAllDayListItemElement);
 }
 
-function initColumn(parent, weekDay) {
+function initColumn(parent, weekDay, events) {
   const calendarColumnContent = calendarColumnTemplateElement.content.cloneNode(true);
   const calendarColumnElement = calendarColumnContent.querySelector("[data-week-calendar-column]");
   const calendarColumnCellElement = calendarColumnElement.querySelectorAll("[data-week-calendar-cell]")
 
+  const eventsWithDynamicStyles = calculateEventsDynamicStyles(events);
+  for (const eventWithDynamicStyles of eventsWithDynamicStyles) {
+    initDynamicEvent(
+      calendarColumnElement,
+      eventWithDynamicStyles.event,
+      eventWithDynamicStyles.styles
+    );
+  }
+
   parent.appendChild(calendarColumnElement);
+}
+
+function calculateEventsDynamicStyles(events) {
+  return events.map((event) => {
+    const topPercentage = 100 * (event.startTime / 1440);
+    const bottomPercentage = 100 - 100 * (event.endTime / 1440);
+
+    return {
+      event,
+      styles: {
+        top: `${topPercentage}%`,
+        bottom: `${bottomPercentage}%`,
+        left: "0%",
+        right: "0%"
+      }
+    }
+  });
+}
+
+function groupEvents() {
+  if (events.length === 0) {
+    return { eventGroups: [], totalColumns: 0 };
+  }
+
+  const firstEventGroup = [
+    {
+      event: events[0],
+      columnIndex: 0,
+      isInitial: true
+    }
+  ];
+
+  const eventGroups = [firstEventGroup];
+  for (let i = 1; i < events.length; i += 1) {
+    const lastEventGroup = eventGroups[eventGroups.length - 1];
+    const loopEvent = events[i];
+
+    const lastEventGroupCollidingItems = lastEventGroup.filter((eventGroupItem) => eventCollidesWith(eventGroupItem.event, loopEvent));
+
+    if (lastEventGroupCollidingItems.length === 0) {
+      const newEventGroupItem = {
+        event: loopEvent,
+        columnIndex: 0,
+        isInitial: true
+      };
+
+      const newEventGroup = [newEventGroupItem];
+      eventGroups.push(newEventGroup);
+      continue;
+    }
+
+    if (lastEventGroupCollidingItems.length === lastEventGroup.length) {
+      const newEventGroupItem = {
+        event: loopEvent,
+        columnIndex: lastEventGroup.length,
+        isInitial: true
+      };
+
+      lastEventGroup.push(newEventGroupItem);
+      continue;
+    }
+
+    let newColumnIndex = 0;
+    while (true) {
+      const isColumnIndexInUse = lastEventGroupCollidingItems.some((eventGroupItem) => eventGroupItem.columnIndex === newColumnIndex);
+
+      if (isColumnIndexInUse) {
+        newColumnIndex += 1;
+      } else {
+        break;
+      }
+    }
+
+    const newEventGroupItem = {
+      event: loopEvent,
+      columnIndex: newColumnIndex,
+      isInitial: true
+    };
+
+    constNewEventGroup = {
+      ...lastEventGroupCollidingItems.map((eventGroupItem) => ({
+        ...eventGroupItem,
+        isInitial: false
+      })),
+      newEventGroupItem
+    };
+
+    eventGroups.push(newEventGroup);
+  }
+}
+
+function sortEventsByTime(events) {
+  events.sort((eventA, eventB) => {
+    if (eventStartBefore(eventA, eventB)) {
+      return -1;
+    }
+    if (eventStartBefore(eventB, eventA)) {
+      return 1
+    }
+    return eventEndsBefore(eventA, eventB) ? 1 : -1;
+  });
 }
